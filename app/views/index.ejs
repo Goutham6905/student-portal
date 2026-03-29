@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #0a0e1a;
+      --surface: #111827;
+      --border: #1e2d45;
+      --accent: #f5a623;
+      --accent2: #3b82f6;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --good: #22c55e;
+      --bad: #ef4444;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'IBM Plex Sans', sans-serif;
+      min-height: 100vh;
+    }
+    /* ── Header ── */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 1.25rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      display: flex;
+      flex-direction: column;
+    }
+    .logo-top {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    .logo-main {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .admin-btn {
+      background: var(--accent);
+      color: #0a0e1a;
+      padding: 0.5rem 1.2rem;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.85rem;
+      letter-spacing: 0.03em;
+      transition: opacity 0.2s;
+    }
+    .admin-btn:hover { opacity: 0.85; }
+
+    /* ── Stats bar ── */
+    .stats {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem 2rem;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .stat-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 1.25rem;
+      min-width: 130px;
+    }
+    .stat-label {
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .stat-value {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-top: 0.2rem;
+    }
+
+    /* ── Search ── */
+    .toolbar {
+      padding: 1.25rem 2rem;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    .search-wrap {
+      position: relative;
+      flex: 1;
+      max-width: 400px;
+    }
+    .search-wrap input {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 8px;
+      padding: 0.6rem 1rem 0.6rem 2.5rem;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .search-wrap input:focus { border-color: var(--accent2); }
+    .search-icon {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    .branch-filter {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 8px;
+      padding: 0.6rem 1rem;
+      font-family: 'IBM Plex Sans', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      cursor: pointer;
+    }
+
+    /* ── Table ── */
+    .table-wrap {
+      padding: 0 2rem 2rem;
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    thead tr {
+      background: var(--surface);
+      border-bottom: 2px solid var(--accent);
+    }
+    th {
+      padding: 0.85rem 1rem;
+      text-align: left;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+    }
+    tbody tr:hover { background: rgba(255,255,255,0.03); }
+    td {
+      padding: 0.9rem 1rem;
+      vertical-align: middle;
+    }
+    .roll { font-family: 'IBM Plex Mono', monospace; font-size: 0.85rem; color: var(--accent); }
+    .branch-badge {
+      background: rgba(59,130,246,0.15);
+      color: var(--accent2);
+      border: 1px solid rgba(59,130,246,0.3);
+      border-radius: 20px;
+      padding: 0.2rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .cgpa {
+      font-family: 'IBM Plex Mono', monospace;
+      font-weight: 600;
+    }
+    .cgpa.high { color: var(--good); }
+    .cgpa.mid  { color: var(--accent); }
+    .cgpa.low  { color: var(--bad); }
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--muted);
+    }
+    .empty-state .icon { font-size: 3rem; margin-bottom: 1rem; }
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      color: var(--muted);
+      font-size: 0.8rem;
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <span class="logo-top">IIIT Tiruchirappalli</span>
+    <span class="logo-main">Student Portal</span>
+  </div>
+  <a href="/admin" class="admin-btn">⚙ Admin Panel</a>
+</header>
+
+<div class="stats">
+  <div class="stat-card">
+    <div class="stat-label">Total Students</div>
+    <div class="stat-value"><%= students.length %></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Avg CGPA</div>
+    <div class="stat-value">
+      <%= students.length > 0
+        ? (students.reduce((s,st)=>s+parseFloat(st.cgpa),0)/students.length).toFixed(2)
+        : '—' %>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Branches</div>
+    <div class="stat-value"><%= new Set(students.map(s=>s.branch)).size %></div>
+  </div>
+</div>
+
+<div class="toolbar">
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="Search by name or roll number…" oninput="filterTable()"/>
+  </div>
+  <select class="branch-filter" id="branchFilter" onchange="filterTable()">
+    <option value="">All Branches</option>
+    <% [...new Set(students.map(s=>s.branch))].forEach(b => { %>
+      <option value="<%= b %>"><%= b %></option>
+    <% }) %>
+  </select>
+</div>
+
+<div class="table-wrap">
+  <% if (students.length === 0) { %>
+    <div class="empty-state">
+      <div class="icon">🎓</div>
+      <p>No student records yet. Visit the Admin Panel to add students.</p>
+    </div>
+  <% } else { %>
+  <table id="studentTable">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Roll No</th>
+        <th>Name</th>
+        <th>Branch</th>
+        <th>Semester</th>
+        <th>CGPA</th>
+        <th>Email</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% students.forEach((s, i) => {
+           const cgpa = parseFloat(s.cgpa);
+           const cgpaClass = cgpa >= 8.5 ? 'high' : cgpa >= 6.5 ? 'mid' : 'low';
+      %>
+      <tr>
+        <td style="color:var(--muted)"><%= i+1 %></td>
+        <td class="roll"><%= s.roll_no %></td>
+        <td><strong><%= s.name %></strong></td>
+        <td><span class="branch-badge"><%= s.branch %></span></td>
+        <td style="color:var(--muted)">Sem <%= s.semester %></td>
+        <td class="cgpa <%= cgpaClass %>"><%= parseFloat(s.cgpa).toFixed(2) %></td>
+        <td style="color:var(--muted);font-size:0.82rem"><%= s.email %></td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <% } %>
+</div>
+
+<footer>Student Portal — CS515 Unix Programming Assignment 03 · IIIT Tiruchirappalli</footer>
+
+<script>
+function filterTable() {
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const branch = document.getElementById('branchFilter').value.toLowerCase();
+  const rows = document.querySelectorAll('#studentTable tbody tr');
+  rows.forEach(row => {
+    const text = row.textContent.toLowerCase();
+    const rowBranch = row.cells[3].textContent.trim().toLowerCase();
+    const matchSearch = !search || text.includes(search);
+    const matchBranch = !branch || rowBranch === branch;
+    row.style.display = matchSearch && matchBranch ? '' : 'none';
+  });
+}
+</script>
+</body>
+</html>
