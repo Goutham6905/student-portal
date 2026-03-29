@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: student-portal-config
+  labels:
+    app: student-portal
+data:
+  DB_HOST: "postgres-service"
+  DB_PORT: "5432"
+  DB_NAME: "studentdb"
+  DB_USER: "postgres"
+  PORT: "3000"

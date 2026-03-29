@@ -1,0 +1,61 @@
+# ── Web Application Deployment ───────────────────────────────────────────────
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: student-portal-deployment
+  labels:
+    app: student-portal
+spec:
+  replicas: 2          # Assignment requires at least 2 replicas
+  selector:
+    matchLabels:
+      app: student-portal
+  template:
+    metadata:
+      labels:
+        app: student-portal
+    spec:
+      containers:
+        - name: student-portal
+          image: student-portal:latest   # Built locally with Minikube's Docker
+          imagePullPolicy: Never         # Use local image; don't pull from registry
+          ports:
+            - containerPort: 3000
+          envFrom:
+            - configMapRef:
+                name: student-portal-config
+          env:
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: student-portal-secret
+                  key: DB_PASSWORD
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+---
+# ── Web Application Service (NodePort — accessible from host) ─────────────────
+apiVersion: v1
+kind: Service
+metadata:
+  name: student-portal-service
+  labels:
+    app: student-portal
+spec:
+  type: NodePort
+  selector:
+    app: student-portal
+  ports:
+    - protocol: TCP
+      port: 80           # Service port inside the cluster
+      targetPort: 3000   # Container port
+      nodePort: 30080    # Port accessible on Minikube host (30000–32767)
