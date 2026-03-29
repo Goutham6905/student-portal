@@ -1,7 +1,6 @@
 version: '3.9'
 
 services:
-  # ── PostgreSQL Database ───────────────────────────────────────────────────
   db:
     image: postgres:16-alpine
     container_name: student_db
@@ -20,11 +19,10 @@ services:
     networks:
       - app_network
 
-  # ── Web Application ───────────────────────────────────────────────────────
   web:
     build:
-      context: ./app
-      dockerfile: ../Dockerfile
+      context: .
+      dockerfile: Dockerfile
     container_name: student_web
     restart: unless-stopped
     ports:
@@ -36,6 +34,9 @@ services:
       DB_USER: postgres
       DB_PASSWORD: postgres
       PORT: 3000
+      ADMIN_USER: admin
+      ADMIN_PASS: admin123
+      SESSION_SECRET: change-this-in-production
     depends_on:
       db:
         condition: service_healthy
